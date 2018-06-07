@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zam - Video Conferencing Made Simple</title>
+
+    <script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://simplewebrtc.com/latest-v2.js"></script>
+    <script type="text/javascript" src="semantic/dist/semantic.min.js"></script>
+
+    <script type="text/javascript" src="./assets/js/index.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+    <link type="text/css" rel="stylesheet" href="./assets/css/index.css"/>
+
+</head>
+<body>
+
+<div id="app">
+
+    <div id="videos">
+        <div class="row background">
+            <video id="my_video" style="width: 100%; height: 100%;" class="16 wide column"></video>
+        </div>
+    </div>
+
+    <div class="ui center aligned card segment" style="position: fixed;">
+        <div class="content header">
+            <h1>ZAM</h1>
+        </div>
+        <div class="content left aligned segment">
+            <div class="ui sub header center aligned">
+                <p>Simple, Secure Video Chat Platform</p>
+            </div>
+            <div class="ui form">
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Username"/>
+                </div>
+                <div class="ui horizontal divider">
+                    OR
+                </div>
+                <div class="field">
+                    <div class="ui compact segment">
+                        <div class="ui toggle checkbox">
+                            <input type="checkbox" id="join_room"/>
+                            <label>Join Room</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="room_id_div" class="field hidden">
+                    <label>Room ID</label>
+                    <input type="text" id="room_id" placeholder="#"/>
+                </div>
+            </div>
+        </div>
+        <div class="extra content">
+            <button class="ui primary disabled button" onclick="submitForm();">Go!</button>
+        </div>
+    </div>
+
+
+</div>
+
+</body>
+</html>
