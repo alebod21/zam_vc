@@ -8,6 +8,7 @@
     <script type="text/javascript" src="https://simplewebrtc.com/latest-v2.js"></script>
     <script type="text/javascript" src="semantic/dist/semantic.min.js"></script>
 
+    <script type="text/javascript" src="./assets/js/utils.js"></script>
     <script type="text/javascript" src="./assets/js/index.js"></script>
 
     <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
@@ -18,13 +19,11 @@
 
 <div id="app">
 
-    <div id="videos">
-        <div class="row background">
-            <video id="my_video" style="width: 100%; height: 100%;" class="16 wide column"></video>
-        </div>
+    <div id="videos" class="ui one column grid background">
+        <video id="my_video" class="column blur"></video>
     </div>
 
-    <div class="ui center aligned card segment" style="position: fixed;">
+    <div id="form" class="ui center aligned card segment" style="position: fixed;">
         <div class="content header">
             <h1>ZAM</h1>
         </div>

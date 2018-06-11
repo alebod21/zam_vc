@@ -1,5 +1,7 @@
 var webRTC;
 
+var users = 1;
+
 $(document).ready(function() {
 
     console.log("Document ready...");
@@ -19,10 +21,12 @@ function submitForm() {
         if (joinRoom) {
             if(roomID && roomID != " ") {
                 connect(roomID);
+                transition();
             } else {
                 highlightField($("#room_id"));
             }
         } else {
+            transition();
             createRoom();
         }
     } else {
@@ -48,6 +52,7 @@ function startSession() {
     webRTC.on('createdPeer', function(peer) {
         console.log("Create peer!");
         console.log("Peer: " + peer);
+        updateVideos(true);
     });
 
     webRTC.on('stunservers', function(args) {
@@ -87,7 +92,22 @@ function createRoom() {
 // Transitions the UI to conversation mode
 
 function transition() {
-    // document.getElementById("videos").appendChild(document.getElementById("my_video"));
+    $('#form').hide();
+    $('#my_video').removeClass('blur');
+}
+
+// Adds a users video stream to the view
+function updateVideos(joined) {
+    $('video').addClass('column');
+    if(joined) {
+        $('#videos').addClass(convert_number(users + 1), 'column');
+        $('#videos').removeClass(convert_number(users), 'column');
+        users++;
+    } else {
+        $('#videos').addClass(convert_number(users - 1), 'column');
+        $('#videos').removeClass(convert_number(users), 'column');
+        users--;
+    }
 }
 
 // Utils
