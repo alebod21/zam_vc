@@ -2,7 +2,11 @@ var webRTC;
 
 var users = 1;
 
+var roomID = "";
+
 $(document).ready(function() {
+
+    $('.menu').hide();
 
     console.log("Document ready...");
 
@@ -15,7 +19,7 @@ $(document).ready(function() {
 function submitForm() {
     var username = $('#username').val();
     var joinRoom = $('#join_room').is(':checked');
-    var roomID = $('#room_id').val();
+    roomID = $('#room_id').val();
 
     if(username && username != " ") {
         if (joinRoom) {
@@ -52,7 +56,7 @@ function startSession() {
     webRTC.on('createdPeer', function(peer) {
         console.log("Create peer!");
         console.log("Peer: " + peer);
-        updateVideos(true);
+        setTimeout(updateVideos, 500);
     });
 
     webRTC.on('stunservers', function(args) {
@@ -81,9 +85,9 @@ function connect(roomID) {
 
 function createRoom() {
     if(webRTC) {
-        var room = randomID();
-        webRTC.createRoom(room, function() {
-            console.log("created room: " + room);
+        roomID = randomID();
+        webRTC.createRoom(roomID, function() {
+            console.log("created room: " + roomID);
             transition();
         });
     }
@@ -94,19 +98,29 @@ function createRoom() {
 function transition() {
     $('#form').hide();
     $('#my_video').removeClass('blur');
+    $('#room_id_show').text(roomID);
+    $(".menu").show();
 }
 
 // Adds a users video stream to the view
-function updateVideos(joined) {
+function updateVideos() {
     $('video').addClass('column');
-    if(joined) {
-        $('#videos').addClass(convert_number(users + 1), 'column');
-        $('#videos').removeClass(convert_number(users), 'column');
-        users++;
-    } else {
-        $('#videos').addClass(convert_number(users - 1), 'column');
-        $('#videos').removeClass(convert_number(users), 'column');
-        users--;
+    // if(joined) {
+    //     removeClassses($('#videos'));
+    //     $('#videos').addClass(convert_number(users + 1), 'column');
+    //     $('#videos').removeClass(convert_number(users), 'column');
+    //     users++;
+    // } else {
+    //     removeClassses($('#videos'));
+    //     $('#videos').addClass(convert_number(users - 1), 'column');
+    //     $('#videos').removeClass(convert_number(users), 'column');
+    //     users--;
+    // }
+}
+
+function removeClassses(element) {
+    for(element in element.classesToArray()) {
+        console.log(element);
     }
 }
 
