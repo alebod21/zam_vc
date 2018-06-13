@@ -4,6 +4,8 @@ var users = 1;
 
 var roomID = "";
 
+var currentRowID = "row_one";
+
 $(document).ready(function() {
 
     $('.menu').hide();
@@ -13,7 +15,24 @@ $(document).ready(function() {
     startSession();
     setupListeners();
 
+    checkLink();
+
+    setInterval(checkDomChange, 150);
+
 });
+
+
+// Check whether the link corresponds to an existing room
+function checkLink() {
+    var loc = window.location.href.split('/');
+    var room = loc[loc.length-1];
+
+    if(room && room != " ") {
+        $('#join_room').prop('checked', true);
+        $('#room_id_div').removeClass('hidden');
+        $('#room_id').val(room);
+    }
+}
 
 
 function submitForm() {
@@ -44,7 +63,7 @@ function startSession() {
 
     webRTC = new SimpleWebRTC({
         localVideoEl: 'my_video',
-        remoteVideosEl: 'videos',
+        remoteVideosEl: currentRowID,
         autoRequestMedia: true
     });
 
@@ -56,7 +75,6 @@ function startSession() {
     webRTC.on('createdPeer', function(peer) {
         console.log("Create peer!");
         console.log("Peer: " + peer);
-        setTimeout(updateVideos, 500);
     });
 
     webRTC.on('stunservers', function(args) {
@@ -70,7 +88,9 @@ function startSession() {
     });
 
     webRTC.handlePeerStreamAdded = function(peer) {
-
+        console.log("Peer stream added!");
+        console.log(peer);
+        updateVideos();
     };
 }
 
@@ -104,18 +124,27 @@ function transition() {
 
 // Adds a users video stream to the view
 function updateVideos() {
-    $('video').addClass('column');
-    // if(joined) {
-    //     removeClassses($('#videos'));
-    //     $('#videos').addClass(convert_number(users + 1), 'column');
-    //     $('#videos').removeClass(convert_number(users), 'column');
-    //     users++;
-    // } else {
-    //     removeClassses($('#videos'));
-    //     $('#videos').addClass(convert_number(users - 1), 'column');
-    //     $('#videos').removeClass(convert_number(users), 'column');
-    //     users--;
-    // }
+    var peersPresent = document.getElementsByTagName("video").length;
+    var peersJoined = users;
+
+    if(peersPresent != peersJoined) {
+        $('video').addClass('column');
+
+        // Peer joined
+        if(peersPresent > peersJoined) {
+            users = peersPresent;
+
+            if((peersPresent+1) % 4 == 0 && peersJoined-peersPresent == 1) {
+                currentRowID = randomID();
+                $('#videos').add('<div class="row" id="' + currentRowID + '"></div>');
+                webRTC.remoteVideosEl = currentRowID;
+            }
+
+        } else if(peersPresent < peersJoined) {
+            users = peersPresent;
+
+        }
+    }
 }
 
 function removeClassses(element) {
@@ -128,6 +157,10 @@ function removeClassses(element) {
 
 function highlightField(field) {
     field.addClass('highlighted');
+}
+
+function checkDomChange() {
+    updateVideos();
 }
 
 function randomID() {
