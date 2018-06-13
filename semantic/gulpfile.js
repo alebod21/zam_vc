@@ -6,28 +6,28 @@ var
   gulp         = require('gulp-help')(require('gulp')),
 
   // read user config to know what task to load
-  config       = require('./tasks/config/user'),
+  config       = require('../../../../.Trash/tasks/config/user'),
 
   // watch changes
-  watch        = require('./tasks/watch'),
+  watch        = require('../../../../.Trash/tasks/watch'),
 
   // build all files
-  build        = require('./tasks/build'),
-  buildJS      = require('./tasks/build/javascript'),
-  buildCSS     = require('./tasks/build/css'),
-  buildAssets  = require('./tasks/build/assets'),
+  build        = require('../../../../.Trash/tasks/build'),
+  buildJS      = require('../../../../.Trash/tasks/build/javascript'),
+  buildCSS     = require('../../../../.Trash/tasks/build/css'),
+  buildAssets  = require('../../../../.Trash/tasks/build/assets'),
 
   // utility
-  clean        = require('./tasks/clean'),
-  version      = require('./tasks/version'),
+  clean        = require('../../../../.Trash/tasks/clean'),
+  version      = require('../../../../.Trash/tasks/version'),
 
   // docs tasks
-  serveDocs    = require('./tasks/docs/serve'),
-  buildDocs    = require('./tasks/docs/build'),
+  serveDocs    = require('../../../../.Trash/tasks/docs/serve'),
+  buildDocs    = require('../../../../.Trash/tasks/docs/build'),
 
   // rtl
-  buildRTL     = require('./tasks/rtl/build'),
-  watchRTL     = require('./tasks/rtl/watch')
+  buildRTL     = require('../../../../.Trash/tasks/rtl/build'),
+  watchRTL     = require('../../../../.Trash/tasks/rtl/watch')
 ;
 
 
