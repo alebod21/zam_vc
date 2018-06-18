@@ -60,7 +60,7 @@ function startSession() {
     webRTC.on('createdPeer', function(peer) {
         console.log("Create peer!");
         console.log("Peer: " + peer);
-        updateVideos();
+        updateVideos(true);
     });
 
     webRTC.on('videoAdded', function(videoEl, peer) {
@@ -79,6 +79,12 @@ function startSession() {
            "</div>");
 
         peerVideos[peer.sessionId] = currentColumnID;
+    });
+
+    webRTC.on('videoRemoved', function(videoEl, peer) {
+        $("#" + peerVideos[peer.sessionId]).remove();
+        peerVideos[peer.sessionId] = null;
+        updateVideos(false);
     });
 
     webRTC.on('stunservers', function(args) {
@@ -129,17 +135,22 @@ function transition() {
 }
 
 // Adds a users video stream to the view
-function updateVideos() {
-    if(users % maxColumnCount == 0) {
-        // Row Full
-        $("#videos").append('<div class="row"></div>');
+function updateVideos(joined) {
+    // Called when a new user is about to leave
+    if(joined) {
+        if (users % maxColumnCount == 0) {
+            // Row Full
+            $("#videos").append('<div class="row"></div>');
+        }
+
+        addColumn();
+
+        $("#videos").addClass("column");
+
+        users++;
+    } else {
+        // Called when a user has left
     }
-
-    addColumn();
-
-    $("#videos").addClass("column");
-
-    users++;
 
 }
 
