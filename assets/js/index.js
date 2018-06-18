@@ -9,9 +9,9 @@ var peerVideos = {};
 var currentColumnID = "";
 
 var url = "https://www.zam.io/";
+var maxColumnCount = 4;
 
 $(document).ready(function() {
-    console.log("Document ready...");
     $("#videos").css("padding-top", "0px");
 
     startSession();
@@ -20,29 +20,15 @@ $(document).ready(function() {
     checkLink();
 });
 
-
-// Check whether the link corresponds to an existing room
-function checkLink() {
-    var loc = window.location.href.split('/');
-    var room = loc[loc.length-1];
-
-    if(room && room != " ") {
-        $('#join_room').prop('checked', true);
-        $('#room_id_div').removeClass('hidden');
-        $('#room_id').val(room);
-    }
-}
-
-
 function submitForm() {
     var username = $('#username').val();
     var joinRoom = $('#join_room').is(':checked');
-    roomID = $('#room_id').val();
+    var fieldRoomID = $('#room_id').val();
 
     if(username && username != " ") {
         if (joinRoom) {
-            if(roomID && roomID != " ") {
-                connect(roomID);
+            if(fieldRoomID && fieldRoomID != " ") {
+                connect(fieldRoomID);
                 transition();
             } else {
                 highlightField($("#room_id"));
@@ -131,7 +117,7 @@ function createRoom() {
 function transition() {
     $('#form').hide();
     $('#my_video').removeClass('blur');
-    $('#room_id_show').text(roomID);
+    $('#room_id_show').text(url + roomID);
     $(".menu").removeClass("hidden");
 
     $(".image").dimmer({on: "hover"});
@@ -144,27 +130,12 @@ function transition() {
 
 // Adds a users video stream to the view
 function updateVideos() {
-    if(users % 4 == 0) {
+    if(users % maxColumnCount == 0) {
         // Row Full
         $("#videos").append('<div class="row"></div>');
     }
 
     addColumn();
-
-    if(users == 1) {
-        // Set Two columns
-        $("#videos").addClass("two");
-        $("#videos").removeClass("one column");
-        $("#videos").css("padding-top", "50px");
-    } else if(users == 2) {
-        // Set Three Columns
-        $("#videos").addClass("three column");
-        $("#videos").removeClass("two column");
-    } else if(users == 3) {
-        // Set Four Columns
-        $("#videos").addClass("four column");
-        $("#videos").removeClass("three column");
-    }
 
     $("#videos").addClass("column");
 
@@ -179,6 +150,18 @@ function addColumn() {
 }
 
 // Utils
+
+// Check whether the link corresponds to an existing room
+function checkLink() {
+    var loc = window.location.href.split('/');
+    var room = loc[loc.length-1];
+
+    if(room && room != " ") {
+        $('#join_room').prop('checked', true);
+        $('#room_id_div').removeClass('hidden');
+        $('#room_id').val(room);
+    }
+}
 
 function highlightField(field) {
     field.addClass('highlighted');
