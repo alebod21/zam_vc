@@ -8,11 +8,12 @@ var peerVideos = {};
 
 var currentColumnID = "";
 
-var url = "https://www.zam.io/";
+var url = "";
 var maxColumnCount = 4;
 
 $(document).ready(function() {
     $("#videos").css("padding-top", "0px");
+    $(".menu").hide();
 
     startSession();
     setupListeners();
@@ -64,19 +65,21 @@ function startSession() {
     });
 
     webRTC.on('videoAdded', function(videoEl, peer) {
+        $("#" + currentColumnID).append("<div class=\"blurring dimmable image\">" +
+            "<div class=\"ui dimmer\">" +
+            "<div class=\"content header\">" +
+            "<h1 class='username'>USERNAME</h1>" +
+            "</div>" +
+            "<div class=\"content message_board\">" +
+            "<div class=\"center\">" +
+            "<div class=\"ui inverted button\">Message</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>");
         $("#" + currentColumnID).append(videoEl);
-        $("#" + currentColumnID).append("<div class=\"blurring dimmable image\" style=\"width: 100%; height: 100%; padding: 15px;\">" +
-           "<div class=\"ui dimmer\">" +
-           "<div class=\"content header\">" +
-           "<h1 class='username'>USERNAME</h1>" +
-           "</div>" +
-           "<div class=\"content message_board\">" +
-           "<div class=\"center\">" +
-           "<div class=\"ui inverted button\">Message</div>" +
-           "</div>" +
-           "</div>" +
-           "</div>" +
-           "</div>");
+
+        $(".image").dimmer({on: "hover"});
 
         peerVideos[peer.sessionId] = currentColumnID;
     });
@@ -124,9 +127,8 @@ function transition() {
     $('#form').hide();
     $('#my_video').removeClass('blur');
     $('#room_id_show').text(url + roomID);
-    $(".menu").removeClass("hidden");
+    $(".menu").show();
 
-    $(".image").dimmer({on: "hover"});
     // $(".column").on("hover", function() {
     //     $(this).children(".image .dimmer .content .header .username").text("It worked!");
     // });
@@ -146,10 +148,15 @@ function updateVideos(joined) {
         addColumn();
 
         $("#videos").addClass("column");
+        $("#videos").css("padding-top", "50px");
 
         users++;
     } else {
         // Called when a user has left
+        users--;
+        if(users == 1) {
+            $("#videos").css("padding-top", "0px");
+        }
     }
 
 }
