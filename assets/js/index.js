@@ -1,24 +1,23 @@
 var webRTC;
 
 var users = 1;
-
 var roomID = "";
 
-var currentRowID = "row_one";
+// Save peer's sessionID to videoID
+var peerVideos = {};
+
+var currentColumnID = "";
+
+var url = "https://www.zam.io/";
 
 $(document).ready(function() {
-
-    $('.menu').hide();
-
     console.log("Document ready...");
+    $("#videos").css("padding-top", "0px");
 
     startSession();
     setupListeners();
 
     checkLink();
-
-    setInterval(checkDomChange, 150);
-
 });
 
 
@@ -63,7 +62,7 @@ function startSession() {
 
     webRTC = new SimpleWebRTC({
         localVideoEl: 'my_video',
-        remoteVideosEl: currentRowID,
+        remoteVideosEl: currentColumnID,
         autoRequestMedia: true
     });
 
@@ -75,6 +74,25 @@ function startSession() {
     webRTC.on('createdPeer', function(peer) {
         console.log("Create peer!");
         console.log("Peer: " + peer);
+        updateVideos();
+    });
+
+    webRTC.on('videoAdded', function(videoEl, peer) {
+        $("#" + currentColumnID).append(videoEl);
+        $("#" + currentColumnID).append("<div class=\"blurring dimmable image\" style=\"width: 100%; height: 100%; padding: 15px;\">" +
+           "<div class=\"ui dimmer\">" +
+           "<div class=\"content header\">" +
+           "<h1 class='username'>USERNAME</h1>" +
+           "</div>" +
+           "<div class=\"content message_board\">" +
+           "<div class=\"center\">" +
+           "<div class=\"ui inverted button\">Message</div>" +
+           "</div>" +
+           "</div>" +
+           "</div>" +
+           "</div>");
+
+        peerVideos[peer.sessionId] = currentColumnID;
     });
 
     webRTC.on('stunservers', function(args) {
@@ -86,17 +104,12 @@ function startSession() {
         console.log("Connected to TURN servers!");
         console.log("Args: " + args);
     });
-
-    webRTC.handlePeerStreamAdded = function(peer) {
-        console.log("Peer stream added!");
-        console.log(peer);
-        updateVideos();
-    };
 }
 
 function connect(roomID) {
     if(webRTC) {
         webRTC.joinRoom(roomID, function() {
+            this.roomID = roomID;
             console.log("joined room: " + roomID);
             transition();
         });
@@ -119,48 +132,56 @@ function transition() {
     $('#form').hide();
     $('#my_video').removeClass('blur');
     $('#room_id_show').text(roomID);
-    $(".menu").show();
+    $(".menu").removeClass("hidden");
+
+    $(".image").dimmer({on: "hover"});
+    // $(".column").on("hover", function() {
+    //     $(this).children(".image .dimmer .content .header .username").text("It worked!");
+    // });
+
+    $("#videos").css("padding-bottom", "10px");
 }
 
 // Adds a users video stream to the view
 function updateVideos() {
-    var peersPresent = document.getElementsByTagName("video").length;
-    var peersJoined = users;
-
-    if(peersPresent != peersJoined) {
-        $('video').addClass('column');
-
-        // Peer joined
-        if(peersPresent > peersJoined) {
-            users = peersPresent;
-
-            if((peersPresent+1) % 4 == 0 && peersJoined-peersPresent == 1) {
-                currentRowID = randomID();
-                $('#videos').add('<div class="row" id="' + currentRowID + '"></div>');
-                webRTC.remoteVideosEl = currentRowID;
-            }
-
-        } else if(peersPresent < peersJoined) {
-            users = peersPresent;
-
-        }
+    if(users % 4 == 0) {
+        // Row Full
+        $("#videos").append('<div class="row"></div>');
     }
+
+    addColumn();
+
+    if(users == 1) {
+        // Set Two columns
+        $("#videos").addClass("two");
+        $("#videos").removeClass("one column");
+        $("#videos").css("padding-top", "50px");
+    } else if(users == 2) {
+        // Set Three Columns
+        $("#videos").addClass("three column");
+        $("#videos").removeClass("two column");
+    } else if(users == 3) {
+        // Set Four Columns
+        $("#videos").addClass("four column");
+        $("#videos").removeClass("three column");
+    }
+
+    $("#videos").addClass("column");
+
+    users++;
+
 }
 
-function removeClassses(element) {
-    for(element in element.classesToArray()) {
-        console.log(element);
-    }
+function addColumn() {
+    currentColumnID = randomID();
+    $("#videos .row").last().append('<div id="' + currentColumnID  + '" class="column"></div>');
+    webRTC.remoteVideosEl = currentColumnID;
 }
 
 // Utils
 
 function highlightField(field) {
     field.addClass('highlighted');
-}
-
-function checkDomChange() {
-    updateVideos();
 }
 
 function randomID() {
@@ -191,6 +212,13 @@ function setupListeners() {
     $('#username').on('keyup', checkButton);
     $('#room_id').on('keyup', checkButton);
     $('#join_room').on('change', checkButton);
+
+
+    $('video').resizable({
+        handleSelector: '.splitter',
+        resizeHeight: true,
+        resizeWidth: true
+    })
 }
 
 // Check whether to re-enable the submit button

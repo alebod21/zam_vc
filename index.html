@@ -7,29 +7,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <script type="text/javascript" src="./assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="./assets/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="./assets/js/jquery-resizable.js"></script>
+    <script type="text/javascript" src="./assets/js/jquery-resizableTableColumns.js"></script>
+
     <script type="text/javascript" src="./assets/js/simple_webrtc.js"></script>
     <script type="text/javascript" src="semantic/dist/semantic.min.js"></script>
 
     <script type="text/javascript" src="./assets/js/utils.js"></script>
     <script type="text/javascript" src="./assets/js/index.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css"/>
     <link type="text/css" rel="stylesheet" href="./assets/css/index.css"/>
 
 </head>
 <body>
 
+<style type="text/css">
+
+    .column {
+        padding: 0px;
+    }
+
+</style>
+
 <div id="app">
 
-    <div class="ui fixed menu">
-        <div class="ui left aligned container">
-            <h3>Connect to this room @ <strong id="room_id_show">2352@1</strong></h3>
+    <div class="ui fixed menu hidden">
+        <div class="ui left aligned container" style="float: left; margin: 5px 0px 5px 0px;">
+            <h3>Connect to this room @ <strong id="room_id_show"></strong></h3>
         </div>
     </div>
 
-    <div id="videos" class="ui four column grid background">
-        <div class="row" id="row_one">
-            <video id="my_video" class="column blur"></video>
+    <div id="videos" class="ui grid background one column">
+        <div class="row">
+            <div class="column">
+                <video id="my_video" class="blur"></video>
+            </div>
         </div>
     </div>
 
