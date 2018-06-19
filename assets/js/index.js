@@ -112,8 +112,7 @@ function startSession() {
 
     // Called when a video feed is stopped
     webRTC.on('videoRemoved', function(videoEl, peer) {
-        $("#" + peerVideos[peer.sessionId]).remove();
-        peerVideos[peer.sessionId] = null;
+        $("#" + peer.id + "_video_incoming").remove();
         updateVideos(false);
     });
 
