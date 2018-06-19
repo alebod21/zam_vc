@@ -85,7 +85,6 @@ function startSession() {
         $("#" + currentColumnID).append(videoEl);
 
         $(".dimmer").dimmer({on: "hover"});
-        shareUsername();
     });
 
     // Listen to peer messages
@@ -110,9 +109,15 @@ function startSession() {
       }
     });
 
+    webRTC.on('connectivityError', function (peer) {
+       peer.reconnect();
+       console.log("ERROR!");
+    });
+
     // Called when a video feed is stopped
     webRTC.on('videoRemoved', function(videoEl, peer) {
-        $("#" + peer.id + "_video_incoming").remove();
+        console.log("#" + peer.id + "_video_incoming");
+        $("#" + peer.id + "_video_incoming").parent().remove();
         updateVideos(false);
     });
 
