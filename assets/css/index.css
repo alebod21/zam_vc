@@ -36,6 +36,10 @@ body {
     border-radius: 5px;
 }
 
+.hidden {
+    visibility: hidden;
+}
+
 .blur {
     -webkit-filter: blur(35px);
 }

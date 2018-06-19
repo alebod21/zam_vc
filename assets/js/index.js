@@ -12,6 +12,7 @@ var url = "";
 var maxColumnCount = 4;
 
 $(document).ready(function() {
+    console.log("Document ready!");
     $("#videos").css("padding-top", "0px");
     $(".menu").hide();
 
@@ -65,21 +66,16 @@ function startSession() {
     });
 
     webRTC.on('videoAdded', function(videoEl, peer) {
-        $("#" + currentColumnID).append("<div class=\"blurring dimmable image\">" +
-            "<div class=\"ui dimmer\">" +
-            "<div class=\"content header\">" +
-            "<h1 class='username'>USERNAME</h1>" +
-            "</div>" +
-            "<div class=\"content message_board\">" +
+        $("#" + currentColumnID).append("<div class=\"ui dimmer\">" +
+            "<div class=\"content\">" +
             "<div class=\"center\">" +
-            "<div class=\"ui inverted button\">Message</div>" +
-            "</div>" +
+            "<div class=\"ui inverted button\">Add Friend</div>" +
             "</div>" +
             "</div>" +
             "</div>");
         $("#" + currentColumnID).append(videoEl);
 
-        $(".image").dimmer({on: "hover"});
+        $(".dimmer").dimmer({on: "hover"});
 
         peerVideos[peer.sessionId] = currentColumnID;
     });
