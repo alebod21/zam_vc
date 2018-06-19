@@ -2,14 +2,16 @@ var webRTC;
 
 var users = 1;
 var roomID = "";
+var username = "";
 
-// Save peer's sessionID to videoID
-var peerVideos = {};
+// Save peer to username
+var peerUsernames = {};
 
 var currentColumnID = "";
 
 var url = "";
 var maxColumnCount = 4;
+
 
 $(document).ready(function() {
     console.log("Document ready!");
@@ -20,6 +22,8 @@ $(document).ready(function() {
     setupListeners();
 
     checkLink();
+
+    setInterval(sync, 750);
 });
 
 function submitForm() {
@@ -30,12 +34,14 @@ function submitForm() {
     if(username && username != " ") {
         if (joinRoom) {
             if(fieldRoomID && fieldRoomID != " ") {
+                this.username = username;
                 connect(fieldRoomID);
                 transition();
             } else {
                 highlightField($("#room_id"));
             }
         } else {
+            this.username = username;
             transition();
             createRoom();
         }
@@ -54,43 +60,70 @@ function startSession() {
         autoRequestMedia: true
     });
 
+    // Connected to servers
     webRTC.on('connectionReady', function(sessionID) {
         console.log("Ready to connect!");
         console.log("Session ID: " + sessionID);
     });
 
+    // On new peer connection to the room
     webRTC.on('createdPeer', function(peer) {
         console.log("Create peer!");
         console.log("Peer: " + peer);
         updateVideos(true);
     });
 
+    // Physical video element created
     webRTC.on('videoAdded', function(videoEl, peer) {
-        $("#" + currentColumnID).append("<div class=\"ui dimmer\">" +
+        $("#" + currentColumnID).append("<div class=\"ui dimmer\" style=\"margin: 0px; padding: 15px; \">" +
             "<div class=\"content\">" +
             "<div class=\"center\">" +
-            "<div class=\"ui inverted button\">Add Friend</div>" +
+            "<h1 class='username'>USERNAME</h1>" +
             "</div>" +
             "</div>" +
             "</div>");
         $("#" + currentColumnID).append(videoEl);
 
         $(".dimmer").dimmer({on: "hover"});
-
-        peerVideos[peer.sessionId] = currentColumnID;
+        shareUsername();
     });
 
+    // Listen to peer messages
+    webRTC.on('channelMessage', function(oPeer, sLabel, oData) {
+
+        // update the user's local username
+      if(sLabel == "info") {
+
+          // Peer info channel
+          if(oData.type == "username_update") {
+
+            // Updates peer usernames
+            var username = oData.payload['username'];
+            if(username) {
+              peerUsernames[oPeer] = username;
+              var parent = $("#" + oPeer.id + "_video_incoming").parent();
+              console.log("Parent " + parent);
+              var child = parent.children(".ui .dimmer").children(".content").children(".center").children(".username").first();
+              child.text(username.toUpperCase());
+            }
+          }
+      }
+    });
+
+    // Called when a video feed is stopped
     webRTC.on('videoRemoved', function(videoEl, peer) {
         $("#" + peerVideos[peer.sessionId]).remove();
         peerVideos[peer.sessionId] = null;
         updateVideos(false);
     });
 
+    // Called when connected to STURN servers
     webRTC.on('stunservers', function(args) {
         console.log("Connected to STURN servers!");
         console.log("Args: " + args);
     });
 
+    // Called when connected to TURN servers
     webRTC.on('turnservers', function(args) {
         console.log("Connected to TURN servers!");
         console.log("Args: " + args);
@@ -191,6 +224,9 @@ function randomID() {
     return text;
 }
 
+function shareUsername() {
+    webRTC.sendDirectlyToAll("info", "username_update", {"username": username});
+}
 // Semantic Listeners
 
 function setupListeners() {
@@ -232,6 +268,13 @@ function checkButton(event) {
         } else {
             $('.button.primary').addClass('disabled');
         }
+    }
+}
+
+
+function sync() {
+    if(roomID && users > 1) {
+        shareUsername();
     }
 }
 
